@@ -1,4 +1,4 @@
-name: Publish MoonModCLI as Generic Package
+name: Publish MoonModCLI as Release Asset
 
 on:
   push:
@@ -10,20 +10,12 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: read
-      packages: write
+      contents: write
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Upload Generic Package
-        run: |
-          VERSION="${GITHUB_REF#refs/tags/}"
-          FILE="MoonModCLI.lua"
-
-          curl -X PUT \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Content-Type: application/octet-stream" \
-            --data-binary @"$FILE" \
-            "https://uploads.github.com/repos/${{ github.repository }}/packages/generic/moonmodcli/${VERSION}/MoonModCLI.lua"
+      - name: Upload Release Asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: MoonModCLI.lua
