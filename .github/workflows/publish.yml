@@ -1,0 +1,29 @@
+name: Publish MoonModCLI as Generic Package
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Upload Generic Package
+        run: |
+          VERSION="${GITHUB_REF#refs/tags/}"
+          FILE="MoonModCLI.lua"
+
+          curl -X PUT \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Content-Type: application/octet-stream" \
+            --data-binary @"$FILE" \
+            "https://uploads.github.com/repos/${{ github.repository }}/packages/generic/moonmodcli/${VERSION}/MoonModCLI.lua"
